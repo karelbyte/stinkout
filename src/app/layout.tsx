@@ -18,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://stinkout.vercel.app"),
   title: { default: "Stinkout — Expose Unethical Recruiters", template: "%s — Stinkout" },
   description: "Community-driven platform to report and expose unethical recruiters and hiring practices. Help others avoid bad hiring experiences.",
   openGraph: {
@@ -25,7 +26,17 @@ export const metadata: Metadata = {
     description: "Community-driven platform to report and expose unethical recruiters and hiring practices.",
     siteName: "Stinkout",
     type: "website",
+    locale: "en_US",
+    images: [{ url: "/fly.png", width: 800, height: 600, alt: "Stinkout" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Stinkout — Expose Unethical Recruiters",
+    description: "Community-driven platform to report and expose unethical recruiters and hiring practices.",
+    images: ["/fly.png"],
+  },
+  robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({

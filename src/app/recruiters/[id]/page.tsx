@@ -92,9 +92,9 @@ export default async function RecruiterPage({
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       <div className="mb-8 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-        <div className="mb-4 flex items-start justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row items-start justify-between gap-2">
           <div>
-            <h1 className="text-3xl font-bold text-slate-100">{recruiter.name as string}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-100">{recruiter.name as string}</h1>
             {recruiter.company_name ? (
               <p className="mt-1 text-slate-400">
                 {st("recruiter.worksAt", dict)}{" "}
@@ -111,7 +111,7 @@ export default async function RecruiterPage({
               <p className="mt-1 text-sm text-slate-500">{recruiter.email}</p>
             ) : null}
           </div>
-          <div className="text-right">
+          <div className="sm:text-right">
             <div className="text-sm text-slate-500">
               {st("recruiter.reviewCount", dict, { n: reviews.length })}
             </div>
@@ -137,9 +137,9 @@ export default async function RecruiterPage({
             const reviewEvidence = evidenceByReview.get(review.id as number) || [];
             return (
               <div key={review.id} className="rounded-xl border border-slate-800 bg-slate-900/30 p-5">
-                <div className="mb-3 flex items-start justify-between">
+                <div className="mb-3 flex flex-col sm:flex-row items-start justify-between gap-2">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium text-slate-200">
                         {review.title}
                         {reviewEvidence.length > 0 && (

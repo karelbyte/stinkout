@@ -8,9 +8,8 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-[var(--border-color)] py-6 text-center text-sm text-[var(--text-muted)]">
-      <div className="mb-2 flex items-center justify-center gap-4">
+      <div className="mb-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
         <Link href="/about" className="text-slate-500 hover:text-slate-300 transition-colors">{t("footer.about")}</Link>
-
         <span>&copy; {new Date().getFullYear()} Stinkout</span>
       </div>
       <p>{t("footer.tagline")}</p>

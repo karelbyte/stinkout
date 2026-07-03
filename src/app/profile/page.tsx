@@ -116,10 +116,10 @@ export default function ProfilePage() {
         <div className="space-y-4">
           {reviews.map((review) => (
             <div key={review.id} className="rounded-xl border border-slate-800 bg-slate-900/30 p-5">
-              <div className="mb-2 flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium text-slate-200">{review.title}</h3>
-                  <p className="mt-0.5 text-xs text-slate-500">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-medium text-slate-200 truncate">{review.title}</h3>
+                  <p className="mt-0.5 text-xs text-slate-500 truncate">
                     {review.recruiter_name && `${review.recruiter_name}`}
                     {review.company_name && ` at ${review.company_name}`}
                     {!review.recruiter_name && !review.company_name && t("profile.generalReview")}
@@ -127,29 +127,29 @@ export default function ProfilePage() {
                     {new Date(review.created_at).toLocaleDateString('en-US')}
                   </p>
                 </div>
-                  <div className="flex items-center gap-3">
-                    {review.has_evidence > 0 && (
-                      <FiPaperclip className="text-lg text-lime-500" title={t("evidence.hasEvidence")} />
-                    )}
-                    {review.comment_count > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs text-slate-400" title={t("comments.count", { n: review.comment_count })}>
-                        <FiMessageSquare className="text-sm" /> {review.comment_count}
-                      </span>
-                    )}
-                    {review.ratification_count > 0 && (
-                      <span className="text-xs text-lime-500">
-                        {t("ratify.ratified")} ({review.ratification_count})
-                      </span>
-                    )}
-                    {review.status !== "approved" && (
-                      <span className="rounded bg-yellow-900/50 px-2 py-0.5 text-xs text-yellow-400">
-                        {review.status}
-                      </span>
-                    )}
-                  </div>
+                <div className="flex shrink-0 items-center gap-3 flex-wrap">
+                  {review.has_evidence > 0 && (
+                    <FiPaperclip className="text-lg text-lime-500" title={t("evidence.hasEvidence")} />
+                  )}
+                  {review.comment_count > 0 && (
+                    <span className="inline-flex items-center gap-1 text-xs text-slate-400" title={t("comments.count", { n: review.comment_count })}>
+                      <FiMessageSquare className="text-sm" /> {review.comment_count}
+                    </span>
+                  )}
+                  {review.ratification_count > 0 && (
+                    <span className="text-xs text-lime-500">
+                      {t("ratify.ratified")} ({review.ratification_count})
+                    </span>
+                  )}
+                  {review.status !== "approved" && (
+                    <span className="rounded bg-yellow-900/50 px-2 py-0.5 text-xs text-yellow-400">
+                      {review.status}
+                    </span>
+                  )}
+                </div>
               </div>
               <p className="mb-3 line-clamp-3 text-sm text-slate-400">{review.description}</p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 {review.recruiter_slug && (
                   <Link href={`/recruiters/${review.recruiter_slug}`} className="text-xs text-lime-400 hover:text-lime-300">
                     {t("profile.viewRecruiter")}
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                 )}
                 <button
                   onClick={() => setConfirmId(review.id)}
-                  className="ml-auto text-xs text-red-400 hover:text-red-300"
+                  className="sm:ml-auto text-xs text-red-400 hover:text-red-300"
                 >
                   {t("profile.delete")}
                 </button>

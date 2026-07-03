@@ -63,18 +63,18 @@ export default async function TopPage() {
               <Link
                 key={r.id}
                 href={`/recruiters/${r.slug || r.id}`}
-                className="flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-red-800/50 hover:bg-slate-900/60"
+                className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-red-800/50 hover:bg-slate-900/60"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-900/30 text-sm font-bold text-red-400">
                   {i + 1}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-slate-200">{r.name}</h3>
+                  <h3 className="font-medium text-slate-200 truncate">{r.name}</h3>
                   {r.company_name && (
-                    <p className="text-sm text-slate-500">{r.company_name}</p>
+                    <p className="text-sm text-slate-500 truncate">{r.company_name}</p>
                   )}
                 </div>
-                <div className="text-right text-sm">
+                <div className="text-right text-sm shrink-0">
                   <div className="font-medium text-red-400">{st("top.ratifications", dict, { n: r.total_ratifications })}</div>
                   <div className="text-slate-500">{st("top.reviews", dict, { n: r.review_count })}</div>
                 </div>
@@ -94,15 +94,15 @@ export default async function TopPage() {
               <Link
                 key={c.id}
                 href={`/companies/${c.slug || c.id}`}
-                className="flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-red-800/50 hover:bg-slate-900/60"
+                className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-red-800/50 hover:bg-slate-900/60"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-900/30 text-sm font-bold text-red-400">
                   {i + 1}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-slate-200">{c.name}</h3>
+                  <h3 className="font-medium text-slate-200 truncate">{c.name}</h3>
                 </div>
-                <div className="text-right text-sm">
+                <div className="text-right text-sm shrink-0">
                   <div className="font-medium text-red-400">{st("top.ratifications", dict, { n: c.total_ratifications })}</div>
                   <div className="text-slate-500">{st("top.reviews", dict, { n: c.review_count })}</div>
                 </div>

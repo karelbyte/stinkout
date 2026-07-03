@@ -82,15 +82,15 @@ function ReviewsList() {
           name="q"
           defaultValue={q}
           placeholder={t("reviews.searchPlaceholder")}
-          className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-slate-200 placeholder-slate-500 outline-none transition-colors focus:border-lime-600"
+          className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-200 placeholder-slate-500 outline-none transition-colors focus:border-lime-600"
         />
         <button
           type="submit"
-          className="rounded-xl bg-lime-600 px-6 py-3 font-medium text-white transition-colors hover:bg-lime-500"
+          className="shrink-0 rounded-xl bg-lime-600 px-4 sm:px-6 py-3 font-medium text-white transition-colors hover:bg-lime-500"
         >
-{t("common.search")}
-          </button>
-        </form>
+          {t("common.search")}
+        </button>
+      </form>
 
       <div className="mb-6 flex items-center gap-2">
         <span className="text-sm text-slate-500">{t("reviews.sort")}</span>
@@ -133,17 +133,17 @@ function ReviewsList() {
               href={href}
               className="block rounded-xl border border-slate-800 bg-slate-900/30 p-5 transition-colors hover:border-lime-800/50 hover:bg-slate-900/60"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium text-slate-200">{review.title}</h3>
-                  <p className="mt-1 text-sm text-slate-500">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-medium text-slate-200 truncate">{review.title}</h3>
+                  <p className="mt-1 text-sm text-slate-500 truncate">
                     {review.recruiter_name && `${review.recruiter_name}`}
                     {review.company_name && ` at ${review.company_name}`}
                     {" · "}
                     {new Date(review.created_at).toLocaleDateString('en-US')}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-3 flex-wrap">
                   {review.has_evidence > 0 && (
                     <FiPaperclip className="text-lg text-lime-500" title={t("evidence.hasEvidence")} />
                   )}

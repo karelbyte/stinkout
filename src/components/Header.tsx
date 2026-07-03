@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { useTheme } from "./ThemeProvider";
 import { useI18n } from "@/lib/i18n";
 import LangSwitcher from "./LangSwitcher";
-import { FiSun, FiMoon } from "react-icons/fi";
+import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
 
 
 export default function Header() {
@@ -17,6 +17,7 @@ export default function Header() {
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,6 +26,8 @@ export default function Header() {
       .then((data) => setUser(data.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMobileNavOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -47,12 +50,13 @@ export default function Header() {
 
   return (
     <header className="border-b border-lime-900/30 bg-slate-950">
-      <div className="mx-auto flex max-w-5xl items-center px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-lime-400">
+      <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-3">
+        <Link href="/" className="flex shrink-0 items-center gap-2 text-xl font-bold text-lime-400">
           <span className="text-2xl">☣</span>
           Stinkout
         </Link>
-        <div className="flex flex-1 items-center justify-center gap-2">
+
+        <div className="hidden sm:flex flex-1 items-center justify-center gap-2">
           <Link
             href="/reviews"
             className="rounded-lg border border-slate-700 px-4 py-1.5 text-sm text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
@@ -66,7 +70,8 @@ export default function Header() {
             {t("nav.worst")}
           </Link>
         </div>
-        <nav className="flex items-center gap-3">
+
+        <div className="hidden sm:flex items-center gap-3">
           <LangSwitcher />
           <button
             onClick={toggle}
@@ -140,8 +145,101 @@ export default function Header() {
               </Link>
             </>
           )}
-        </nav>
+        </div>
+
+        <button
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          className="sm:hidden ml-auto rounded-lg border border-slate-700 p-2 text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+          aria-label="Toggle navigation"
+        >
+          {mobileNavOpen ? <FiX size={18} /> : <FiMenu size={18} />}
+        </button>
       </div>
+
+      {mobileNavOpen && (
+        <div className="sm:hidden border-t border-slate-800 px-4 py-4 space-y-3 bg-slate-950">
+          <div className="flex items-center justify-center gap-2">
+            <Link
+              href="/reviews"
+              onClick={() => setMobileNavOpen(false)}
+              className="flex-1 rounded-lg border border-slate-700 px-4 py-2 text-center text-sm text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+            >
+              {t("nav.allReviews")}
+            </Link>
+            <Link
+              href="/top"
+              onClick={() => setMobileNavOpen(false)}
+              className="flex-1 rounded-lg border border-red-900/40 px-4 py-2 text-center text-sm text-red-400 transition-colors hover:border-red-700 hover:text-red-300"
+            >
+              {t("nav.worst")}
+            </Link>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <LangSwitcher />
+            <button
+              onClick={toggle}
+              suppressHydrationWarning
+              className="rounded-lg border border-slate-700 p-2 text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+            >
+              {theme === "dark" ? <FiSun className="text-sm" /> : <FiMoon className="text-sm" />}
+            </button>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            {loading ? (
+              <div className="h-8 w-full animate-pulse rounded bg-slate-800" />
+            ) : user ? (
+              <>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex-1 rounded-lg border border-slate-700 px-4 py-2 text-center text-sm text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+                >
+                  {t("nav.profile")}
+                </Link>
+                <Link
+                  href="/review"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex-1 rounded-lg border border-slate-700 px-4 py-2 text-center text-sm text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+                >
+                  {t("nav.submitReview")}
+                </Link>
+                {user.role === "admin" && (
+                  <Link
+                    href="/admin/reviews"
+                    onClick={() => setMobileNavOpen(false)}
+                    className="flex-1 rounded-lg border border-amber-700/40 px-4 py-2 text-center text-sm text-amber-400 transition-colors hover:border-amber-600"
+                  >
+                    {t("nav.adminPanel")}
+                  </Link>
+                )}
+                <button
+                  onClick={() => { handleLogout(); setMobileNavOpen(false); }}
+                  className="rounded-lg border border-red-800/40 px-4 py-2 text-sm text-red-400 transition-colors hover:border-red-700 hover:text-red-300"
+                >
+                  {t("nav.logout")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex-1 rounded-lg border border-slate-700 px-4 py-2 text-center text-sm text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+                >
+                  {t("nav.signIn")}
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex-1 rounded-lg bg-lime-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-lime-500"
+                >
+                  {t("nav.register")}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

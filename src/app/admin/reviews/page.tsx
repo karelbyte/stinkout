@@ -205,10 +205,10 @@ export default function AdminPage() {
         </Link>
       </div>
 
-      <div className="mb-6 flex gap-1 rounded-xl border border-slate-800 bg-slate-900/50 p-1">
+      <div className="mb-6 flex gap-1 rounded-xl border border-slate-800 bg-slate-900/50 p-1 overflow-x-auto">
         <button
           onClick={() => switchTab("reviews")}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+          className={`shrink-0 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === "reviews"
               ? "bg-lime-600 text-white"
               : "text-slate-400 hover:text-slate-300"
@@ -218,7 +218,7 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => switchTab("reports")}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+          className={`shrink-0 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === "reports"
               ? "bg-lime-600 text-white"
               : "text-slate-400 hover:text-slate-300"
@@ -228,7 +228,7 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => switchTab("users")}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+          className={`shrink-0 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === "users"
               ? "bg-lime-600 text-white"
               : "text-slate-400 hover:text-slate-300"
@@ -281,12 +281,12 @@ export default function AdminPage() {
                   <div className="mb-4 space-y-2">
                     <h3 className="text-sm font-medium text-slate-300">{t("evidence.title")}</h3>
                     {review.evidence.map((ev) => (
-                      <div key={ev.id} className="flex items-center justify-between rounded-lg bg-slate-800 px-4 py-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span>{ev.file_name}</span>
-                          <span className="text-xs text-slate-500">{t("admin.validations", { n: ev.validation_count })}</span>
+                      <div key={ev.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 rounded-lg bg-slate-800 px-4 py-2">
+                        <div className="flex items-center gap-2 text-sm min-w-0">
+                          <span className="truncate">{ev.file_name}</span>
+                          <span className="shrink-0 text-xs text-slate-500">{t("admin.validations", { n: ev.validation_count })}</span>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex shrink-0 gap-2">
                           <a href={ev.file_path} target="_blank" rel="noopener noreferrer" className="text-xs text-lime-400 hover:text-lime-300">{t("admin.viewEvidence")}</a>
                           <button onClick={() => handleDeleteEvidence(ev.id)} className="text-xs text-red-400 hover:text-red-300">{t("admin.deleteEvidence")}</button>
                         </div>
@@ -294,7 +294,7 @@ export default function AdminPage() {
                     ))}
                   </div>
                 )}
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button onClick={() => handleStatus(review.id, "approved")} className="rounded-lg bg-lime-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-lime-500">{t("admin.approve")}</button>
                   <button onClick={() => handleStatus(review.id, "rejected")} className="rounded-lg bg-red-800 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700">{t("admin.reject")}</button>
                 </div>

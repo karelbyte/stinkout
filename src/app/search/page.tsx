@@ -54,16 +54,16 @@ export default async function SearchPage({
           name="q"
           defaultValue={q}
           placeholder={st("search.placeholder", dict)}
-          className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-slate-200 placeholder-slate-500 outline-none transition-colors focus:border-lime-600"
+          className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-200 placeholder-slate-500 outline-none transition-colors focus:border-lime-600"
         />
         <button
           type="submit"
-          className="rounded-xl bg-lime-600 px-6 py-3 font-medium text-white transition-colors hover:bg-lime-500"
+          className="shrink-0 rounded-xl bg-lime-600 px-4 sm:px-6 py-3 font-medium text-white transition-colors hover:bg-lime-500"
         >
           {st("common.search", dict)}
         </button>
       </form>
-
+      
       {q && !hasResults && (
         <p className="rounded-xl border border-slate-800 p-8 text-center text-slate-500">
           {st("search.noResults", dict, { q })}
@@ -82,14 +82,14 @@ export default async function SearchPage({
                 href={`/recruiters/${r.slug || r.id}`}
                 className="block rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-lime-800/50 hover:bg-slate-900/60"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-1">
                   <div>
                     <h3 className="font-medium text-slate-200">{r.name}</h3>
                     {r.company_name && (
                       <p className="mt-0.5 text-sm text-slate-500">{r.company_name}</p>
                     )}
                   </div>
-                  <div className="text-right text-sm">
+                  <div className="sm:text-right text-sm shrink-0">
                     <span className="text-lime-400">{st("search.reviews", dict, { n: r.review_count })}</span>
                   </div>
                 </div>
@@ -111,14 +111,14 @@ export default async function SearchPage({
                 href={`/companies/${c.slug || c.id}`}
                 className="block rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-colors hover:border-lime-800/50 hover:bg-slate-900/60"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-1">
                   <div>
                     <h3 className="font-medium text-slate-200">{c.name}</h3>
                     {c.description && (
                       <p className="mt-0.5 text-sm text-slate-500">{c.description}</p>
                     )}
                   </div>
-                  <div className="text-right text-sm">
+                  <div className="sm:text-right text-sm shrink-0">
                     <span className="text-lime-400">{st("search.reviews", dict, { n: c.review_count })}</span>
                   </div>
                 </div>

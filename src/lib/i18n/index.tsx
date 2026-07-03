@@ -10,11 +10,21 @@ type Dict = typeof en;
 
 const dicts: Record<Lang, Dict> = { en, es };
 
+function detectBrowserLang(): Lang {
+  try {
+    const navLang = navigator.language?.slice(0, 2).toLowerCase();
+    if (navLang === "es") return "es";
+  } catch {}
+  return "en";
+}
+
 function getLangSnapshot(): Lang {
   if (typeof window === "undefined") return "en";
-  const v = localStorage.getItem("lang");
-  if (v === "en" || v === "es") return v;
-  return "en";
+  const stored = localStorage.getItem("lang");
+  if (stored === "en" || stored === "es") return stored;
+  const detected = detectBrowserLang();
+  try { localStorage.setItem("lang", detected); } catch {}
+  return detected;
 }
 
 function subscribeLang(cb: () => void) {

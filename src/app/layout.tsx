@@ -52,7 +52,7 @@ export default function RootLayout({
       >
         <head>
           <Script id="i18n-init" strategy="beforeInteractive">
-            {`try{var l=localStorage.getItem('lang');if(l)document.documentElement.lang=l}catch(e){}`}
+            {`try{var l=localStorage.getItem('lang');if(l)document.documentElement.lang=l;else if(navigator.language&&navigator.language.slice(0,2)=='es'){document.documentElement.lang='es';localStorage.setItem('lang','es')}}catch(e){}`}
           </Script>
         </head>
         <body suppressHydrationWarning className="flex min-h-full flex-col bg-[var(--bg-body)] text-slate-100">

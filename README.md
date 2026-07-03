@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stinkout
+
+A community-driven platform to expose unethical recruiters and hiring practices. Built with Next.js and SQLite.
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Database:** SQLite via better-sqlite3
+- **Styling:** Tailwind CSS with custom Toxic Swamp theme
+- **Language:** TypeScript
+- **Auth:** Session-based with crypto password hashing
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> If you have an existing database from a previous version, delete `data/stinkout.db` to recreate the schema.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── admin/reviews/          # Admin panel (moderate reviews)
+│   ├── api/
+│   │   ├── admin/              # admin endpoints
+│   │   ├── auth/               # register, login, logout, me
+│   │   ├── recruiters/         # recruiter search & detail
+│   │   ├── companies/          # company search & detail
+│   │   ├── reviews/            # review CRUD (with evidence)
+│   │   └── evidence/           # evidence upload & validation
+│   ├── recruiters/[id]/        # recruiter profile
+│   ├── companies/[id]/         # company profile
+│   ├── review/                 # submit review form
+│   ├── search/                 # search results
+│   ├── profile/                # user profile
+│   ├── login/                  # sign in
+│   └── register/               # sign up
+├── components/
+│   ├── Header.tsx              # nav with auth state
+│   ├── EvidenceSection.tsx     # evidence display + validate + add more
+│   └── ReviewActions.tsx       # edit/delete own review
+└── lib/
+    ├── db.ts                   # database connection & schema
+    ├── auth.ts                 # password hashing & session management
+    └── types.ts                # TypeScript interfaces
+```
 
-To learn more about Next.js, take a look at the following resources:
+## API Endpoints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/auth/register` | No | Create account (first user = admin) |
+| POST | `/api/auth/login` | No | Sign in |
+| POST | `/api/auth/logout` | No | Sign out |
+| GET | `/api/auth/me` | No | Get current user |
+| GET | `/api/recruiters?q=` | No | Search recruiters |
+| GET | `/api/recruiters/[id]` | No | Recruiter with reviews & evidence |
+| GET | `/api/companies?q=` | No | Search companies |
+| GET | `/api/companies/[id]` | No | Company with reviews & evidence |
+| GET | `/api/reviews?recruiterId=&sort=&limit=&offset=` | No | List reviews |
+| POST | `/api/reviews` | Yes | Submit review with evidence (multipart) |
+| PATCH | `/api/reviews/[id]` | Yes | Edit own review |
+| DELETE | `/api/reviews/[id]` | Yes | Delete own review |
+| POST | `/api/evidence` | Yes | Add evidence to existing review |
+| POST | `/api/evidence/[id]/validate` | Yes | Validate evidence |
+| GET | `/api/admin/reviews` | Admin | List pending reviews |
+| PATCH | `/api/admin/reviews/[id]` | Admin | Approve/reject review |
+| DELETE | `/api/admin/evidence/[id]` | Admin | Delete evidence |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## File Upload Rules
 
-## Deploy on Vercel
+- Max file size: 10MB
+- Allowed types: images (JPEG, PNG, GIF, WebP), PDF, TXT, EML
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Color Theme
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+"Toxic Swamp" — dark background with lime-green accents.

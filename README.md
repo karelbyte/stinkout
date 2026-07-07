@@ -81,3 +81,10 @@ src/
 ## Color Theme
 
 "Toxic Swamp" — dark background with lime-green accents.
+
+
+¿Alguna vez viviste un proceso de selección poco ético o sufriste el "ghosting" de un reclutador? No te quedes callado.
+
+La transparencia en el mercado laboral comienza con nosotros. Si una empresa o reclutador no respeta tu tiempo y profesionalismo, es momento de exponerlo para que nadie más caiga en esas prácticas.
+
+Haz tu denuncia anónima aquí: https://stinkout.vercel.app

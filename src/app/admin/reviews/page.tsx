@@ -64,6 +64,13 @@ export default function AdminPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [searchQ, setSearchQ] = useState("");
   const [page, setPage] = useState(1);
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [broadcastMsg, setBroadcastMsg] = useState<string | null>(null);
+  const [broadcastLogs, setBroadcastLogs] = useState<{ email: string; name: string; ok: boolean; error?: string }[] | null>(null);
+  const [broadcastUserId, setBroadcastUserId] = useState<number | null>(null);
+  const [sendingToUser, setSendingToUser] = useState(false);
+  const [userBroadcastMsg, setUserBroadcastMsg] = useState<string | null>(null);
+  const [showFailOnly, setShowFailOnly] = useState(false);
 
   async function loadReviews() {
     try {
@@ -198,12 +205,108 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12">
-      <div className="mb-6 flex items-center justify-between">
+      {broadcastUserId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="w-full max-w-sm rounded-xl border border-slate-700 bg-slate-900 p-6">
+            <h3 className="mb-2 text-lg font-semibold text-slate-200">Send Broadcast Email</h3>
+            <p className="mb-6 text-sm text-slate-400">
+              Send the &ldquo;spread the word&rdquo; email to <strong className="text-slate-200">{users.find(u => u.id === broadcastUserId)?.name}</strong>?
+            </p>
+            {userBroadcastMsg && (
+              <div className={`mb-4 rounded-lg border px-4 py-2 text-sm ${userBroadcastMsg.startsWith("Sent") ? "border-lime-800/50 bg-lime-900/20 text-lime-400" : "border-red-800/50 bg-red-900/20 text-red-400"}`}>
+                {userBroadcastMsg}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  setSendingToUser(true);
+                  setUserBroadcastMsg(null);
+                  try {
+                    const res = await fetch("/api/admin/broadcast-user", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ userId: broadcastUserId }),
+                    });
+                    const data = await res.json();
+                    setUserBroadcastMsg(data.message || "Done");
+                  } catch {
+                    setUserBroadcastMsg("Failed to send");
+                  } finally {
+                    setSendingToUser(false);
+                  }
+                }}
+                disabled={sendingToUser}
+                className="flex-1 rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600 disabled:opacity-50"
+              >
+                {sendingToUser ? "Sending..." : "Send"}
+              </button>
+              <button
+                onClick={() => { setBroadcastUserId(null); setUserBroadcastMsg(null); }}
+                disabled={sendingToUser}
+                className="flex-1 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-400 transition-colors hover:border-slate-600 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold text-slate-100">{t("admin.title")}</h1>
-        <Link href="/admin/stats" className="text-sm text-lime-400 hover:text-lime-300">
-          {t("admin.stats")} &rarr;
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={async () => {
+              if (!confirm("Send an email to all registered users asking them to spread the word about Stinkout?")) return;
+              setBroadcasting(true);
+              setBroadcastMsg(null);
+              setBroadcastLogs(null);
+              setShowFailOnly(false);
+              try {
+                const res = await fetch("/api/admin/broadcast", { method: "POST" });
+                const data = await res.json();
+                setBroadcastMsg(data.message || "Done");
+                setBroadcastLogs(data.logs || []);
+              } catch {
+                setBroadcastMsg("Failed to send broadcast");
+              } finally {
+                setBroadcasting(false);
+              }
+            }}
+            disabled={broadcasting}
+            className="rounded-lg border border-amber-700/40 bg-amber-950/30 px-4 py-2 text-xs font-medium text-amber-400 transition-colors hover:border-amber-600 hover:bg-amber-900/40 disabled:opacity-50"
+          >
+            {broadcasting ? "Sending..." : "Broadcast Email"}
+          </button>
+          <Link href="/admin/stats" className="text-sm text-lime-400 hover:text-lime-300">
+            {t("admin.stats")} &rarr;
+          </Link>
+        </div>
       </div>
+      {broadcastMsg && (
+        <div className="mb-4 rounded-lg border px-4 py-2 text-sm text-lime-400" style={broadcastMsg.includes("Failed:") ? { borderColor: "rgba(220,38,38,0.5)", background: "rgba(220,38,38,0.1)", color: "#f87171" } : { borderColor: "rgba(101,163,13,0.5)", background: "rgba(101,163,13,0.1)" }}>
+          <span>{broadcastMsg}</span>
+          {broadcastLogs && broadcastLogs.length > 0 && (
+            <div className="mt-3">
+              <button onClick={() => setShowFailOnly(!showFailOnly)} className="text-xs underline opacity-70 hover:opacity-100">
+                {showFailOnly ? "Show all" : "Show failed only"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {broadcastLogs && broadcastLogs.length > 0 && (
+        <div className="mb-6 max-h-48 overflow-y-auto rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-xs font-mono">
+          {(showFailOnly ? broadcastLogs.filter(l => !l.ok) : broadcastLogs).map((log, i) => (
+            <div key={i} className={`flex items-start gap-2 py-1 ${log.ok ? "text-lime-500" : "text-red-400"}`}>
+              <span className="shrink-0">{log.ok ? "✓" : "✗"}</span>
+              <span className="truncate">{log.name || log.email || "?"}</span>
+              {log.email && <span className="text-slate-600 truncate">({log.email})</span>}
+              {log.error && <span className="text-red-400/70 truncate">— {log.error}</span>}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="mb-6 flex gap-1 rounded-xl border border-slate-800 bg-slate-900/50 p-1 overflow-x-auto">
         <button
@@ -369,11 +472,14 @@ export default function AdminPage() {
                       <td className="px-4 py-3 text-slate-400">{u.review_count}</td>
                       <td className="px-4 py-3 text-slate-500">{new Date(u.created_at).toLocaleDateString('en-US')}</td>
                       <td className="px-4 py-3">
-                        {u.role === "admin" ? (
-                          <button onClick={() => handleRoleChange(u.id, "user")} className="rounded border border-red-800 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-700 hover:text-red-300">{t("admin.removeAdmin")}</button>
-                        ) : (
-                          <button onClick={() => handleRoleChange(u.id, "admin")} className="rounded border border-amber-700 px-3 py-1 text-xs text-amber-400 transition-colors hover:border-amber-600 hover:text-amber-300">{t("admin.makeAdmin")}</button>
-                        )}
+                        <div className="flex flex-wrap gap-2">
+                          <button onClick={() => { setBroadcastUserId(u.id); setUserBroadcastMsg(null); }} className="rounded border border-amber-700/40 px-3 py-1 text-xs text-amber-400 transition-colors hover:border-amber-600 hover:text-amber-300">Send Email</button>
+                          {u.role === "admin" ? (
+                            <button onClick={() => handleRoleChange(u.id, "user")} className="rounded border border-red-800 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-700 hover:text-red-300">{t("admin.removeAdmin")}</button>
+                          ) : (
+                            <button onClick={() => handleRoleChange(u.id, "admin")} className="rounded border border-amber-700 px-3 py-1 text-xs text-amber-400 transition-colors hover:border-amber-600 hover:text-amber-300">{t("admin.makeAdmin")}</button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

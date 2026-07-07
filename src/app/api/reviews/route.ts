@@ -3,6 +3,7 @@ import { dbAll, dbGet, dbRun } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { generateSlug } from "@/lib/slug";
 import { put } from "@vercel/blob";
+import { notifyAdminsNewReview } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -121,6 +122,8 @@ export async function POST(request: NextRequest) {
         );
       }
     }
+
+    notifyAdminsNewReview(reviewId, title, user.name);
 
     return NextResponse.json({
       id: reviewId,

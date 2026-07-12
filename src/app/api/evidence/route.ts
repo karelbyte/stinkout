@@ -24,9 +24,13 @@ export async function POST(request: NextRequest) {
     }
 
     const MAX_SIZE = 10 * 1024 * 1024;
+    const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf", "text/plain", "message/rfc822"];
     for (const file of files) {
       if (file.size > MAX_SIZE) {
         return NextResponse.json({ error: `File ${file.name} exceeds 10MB limit` }, { status: 400 });
+      }
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return NextResponse.json({ error: `File type ${file.type} is not allowed` }, { status: 400 });
       }
     }
 

@@ -1,6 +1,14 @@
 import { dbAll } from "@/lib/db";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerDict, st } from "@/lib/i18n/server";
+
+export const metadata: Metadata = {
+  title: "Worst Offenders",
+  description: "The most ratified recruiters and companies on Stinkout. See who has the most community-verified complaints.",
+  openGraph: { title: "Worst Offenders — Stinkout", description: "The most ratified recruiters and companies." },
+  alternates: { canonical: "/top" },
+};
 
 interface TopRecruiterRow {
   id: number; name: string; slug: string | null;

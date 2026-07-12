@@ -1,6 +1,16 @@
 import { dbAll } from "@/lib/db";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerDict, st } from "@/lib/i18n/server";
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string }> }): Promise<Metadata> {
+  const { q } = await searchParams;
+  return {
+    title: q ? `Search: ${q}` : "Search",
+    description: q ? `Search results for "${q}" on Stinkout. Find recruiters and companies with community reviews.` : "Search recruiters and companies on Stinkout.",
+    alternates: { canonical: "/search" },
+  };
+}
 
 interface RecruiterSearchRow {
   id: number; name: string; slug: string | null; email: string | null;

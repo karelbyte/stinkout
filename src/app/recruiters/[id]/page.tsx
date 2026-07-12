@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { dbAll, dbGet } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
+import type { Metadata } from "next";
 import EvidenceSection, { type EvidenceItem } from "@/components/EvidenceSection";
 import ReviewActions from "@/components/ReviewActions";
 import RatifyButton from "@/components/RatifyButton";
@@ -9,6 +10,27 @@ import ReportButton from "@/components/ReportButton";
 import CommentSection from "@/components/CommentSection";
 import { getServerDict, st } from "@/lib/i18n/server";
 import { FiPaperclip, FiMessageSquare } from "react-icons/fi";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const idNum = parseInt(id, 10);
+  let name: string | undefined;
+  if (!isNaN(idNum)) {
+    const r = await dbGet<{ name: string }>("SELECT name FROM recruiters WHERE id = ?", idNum);
+    if (r) name = r.name;
+  }
+  if (!name) {
+    const r = await dbGet<{ name: string }>("SELECT name FROM recruiters WHERE slug = ?", id);
+    if (r) name = r.name;
+  }
+  if (!name) return { title: "Recruiter Not Found" };
+  return {
+    title: name,
+    description: `Reviews and reports for recruiter ${name}. See what experiences others have shared.`,
+    openGraph: { title: `${name} — Stinkout`, description: `Reviews and reports for recruiter ${name}.` },
+    alternates: { canonical: `/recruiters/${id}` },
+  };
+}
 
 interface ReviewRow {
   id: number; title: string; description: string; rating: number;

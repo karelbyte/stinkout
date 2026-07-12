@@ -7,6 +7,7 @@ import FloatingCoffee from "@/components/FloatingCoffee";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { I18nProvider } from "@/lib/i18n";
 import Script from "next/script";
+import { cookies, headers } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,14 +41,25 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function RootLayout({
+function detectLang(cookieVal: string | undefined, acceptLang: string | null): string {
+  if (cookieVal === "es") return "es";
+  if (cookieVal === "en") return "en";
+  if (acceptLang?.startsWith("es")) return "es";
+  return "en";
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const hdrs = await headers();
+  const lang = detectLang(cookieStore.get("lang")?.value, hdrs.get("Accept-Language"));
+
   return (
       <html
-        lang="en"
+        lang={lang}
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         suppressHydrationWarning
       >

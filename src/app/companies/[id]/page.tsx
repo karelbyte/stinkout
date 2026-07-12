@@ -1,8 +1,30 @@
 import { notFound } from "next/navigation";
 import { dbAll, dbGet } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import type { Metadata } from "next";
 import EvidenceSection, { type EvidenceItem } from "@/components/EvidenceSection";
 import ReviewActions from "@/components/ReviewActions";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const idNum = parseInt(id, 10);
+  let name: string | undefined;
+  if (!isNaN(idNum)) {
+    const c = await dbGet<{ name: string }>("SELECT name FROM companies WHERE id = ?", idNum);
+    if (c) name = c.name;
+  }
+  if (!name) {
+    const c = await dbGet<{ name: string }>("SELECT name FROM companies WHERE slug = ?", id);
+    if (c) name = c.name;
+  }
+  if (!name) return { title: "Company Not Found" };
+  return {
+    title: name,
+    description: `Reviews and reports for company ${name}. See what experiences others have shared about working with them.`,
+    openGraph: { title: `${name} — Stinkout`, description: `Reviews and reports for company ${name}.` },
+    alternates: { canonical: `/companies/${id}` },
+  };
+}
 
 interface ReviewRow {
   id: number; title: string; description: string; rating: number;
